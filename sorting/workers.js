@@ -108,4 +108,37 @@ router.get('/', (req, res) => {
     res.json(arr)
 })
 
+
+function CheckData(req, res, next) {
+    if (req.query.department === 'nothing' && req.query.name === '') {
+        res.status(400).send('Enter data');
+    }
+    else {
+        next();
+    }
+}
+
+function CheckName(req, res, next) {
+    if (arr.filter((worker) => worker.name.toLowerCase().indexOf(req.query.name.toLowerCase()) >= 0).length === 0 && req.query.department==='nothing') {
+        res.status(400).send('Nothing found by this name');
+    }
+    else {
+        next();
+    }
+}
+
+function Sort(req, res) {
+    if (req.query.department === 'nothing') {
+        res.json(arr.filter((worker) => worker.name.toLowerCase().indexOf(req.query.name.toLowerCase()) >= 0))
+    }
+    else if (req.query.name === '') {
+        res.json(arr.filter((worker) => worker.department === req.query.department))
+    }
+    else {
+        res.json(arr.filter((worker) => worker.name.toLowerCase().indexOf(req.query.name.toLowerCase()) >= 0 && worker.department === req.query.department))
+    }
+}
+
+router.get('/sort/', [CheckData, CheckName, Sort]);
+
 module.exports = router;

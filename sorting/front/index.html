@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="script.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <label for="Name">Name:</label>
+    <input type="text" name="Name" id="Name">
+    <br>
+    <br>
+    <select name="departments" id="departments">
+        <option value="nothing">...</option>
+        <option value="Маркетинг">Маркетинг</option>
+        <option value="Финансы">Финансы</option>
+        <option value="ИТ">ИТ</option>
+        <option value="Человеческие ресурсы">Человеческие ресурсы</option>
+    </select>
+    <button onclick="GetByName()">Search</button>
+    <div id="error-message" style="color: red;"></div>
+
+    <div id="workers-list"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
+
+<style>
+    select {
+        height: 30px;
+        width: 200px;
+        font-size: medium;
+    }
+</style>
+
+<script>
+    function GetByName() {
+        const name = document.getElementsByTagName('input')[0].value;
+        const department = document.getElementsByTagName('select')[0].value;
+        fetch(`http://localhost:3000/workers/sort?name=${name}&department=${department}`)
+            .then(response => {
+                if (response.status === 400) {
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                const workersList = document.getElementById('workers-list');
+                const errorMessage = document.getElementById('error-message');
+                
+                workersList.innerHTML = ''; 
+                errorMessage.innerHTML = '';
+
+                data.forEach(worker => {
+                    const workerElement = document.createElement('div');
+                    workerElement.className = 'worker';
+                    workerElement.innerHTML = `
+                        <h2>Name: ${worker.name}</h2>
+                        <p>Position: ${worker.position}</p>
+                        <p>Department: ${worker.department}</p>
+                    `;
+                    workersList.appendChild(workerElement);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching workers:', error);
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.innerHTML = `<div class="error">${error.message}</div>`;
+            });
+    }
+</script>
