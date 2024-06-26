@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Files</title>
+</head>
+
+<body>
+    <h2>Upload Images</h2>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input required type="file" accept="image/*" name="myfile" multiple>
+
+        <button type="submit">Upload</button>
+    </form>
+
+    <div class="container">
+        <script src="index.js"></script>
+    </div>
+</body>
+
+</html>
+
+<style>
+    .container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .container img {
+        width: 100%;
+        display: block;
+        height: 200px; 
+        object-fit: cover;
+    }
+</style>
