@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="Info">
+
+    </div>
+    <form action="/register" method="post">
+        <label for="Name">Name:</label>
+        <input type="text" name="Name" id="Name">
+        <br>
+        <label for="Password">Password</label>
+        <input type="password" name="Password" id="Password">
+        <button type="submit" id="Register">Register</button>
+    </form>
+    <br>
+    <form action="/login" method="post">
+        <label for="Name">Name:</label>
+        <input type="text" name="Name" id="Name1">
+        <br>
+        <label for="Password">Password</label>
+        <input type="password" name="Password" id="Password1">
+        <button type="submit" id="Login" onclick="Log()">Login</button>
+    </form>
+</body>
+
+</html>
+<script>
+    function Log() {
+        var name = document.getElementById('Name1').value;
+        var password = document.getElementById('Password1').value;
+
+        fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ Name: name, Password: password })
+        })
+            .then(response => response.json())
+            .then(data => {
+                Show(data.Name)
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+            });
+    }
+
+    function Show(name) {
+        var button1 = document.getElementById('Register');
+        button1.style.visibility = 'hidden';
+        var button2 = document.getElementById('Login');
+        button2.style.visibility = 'hidden';
+
+        const user = document.getElementById('Info');
+        user.innerHTML = '';
+        const userElement = document.createElement('div');
+        userElement.id = 'user';
+        userElement.innerHTML = `
+                <h2>Welcome, ${name}</h2>
+            `;
+        const logoutButton = document.createElement('button');
+        logoutButton.className = 'Logout';
+        logoutButton.textContent = 'Logout';
+        logoutButton.onclick = logout;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'Delete';
+        deleteButton.textContent = 'Delete';
+        deleteButton.onclick = deleteFunc;
+
+        user.appendChild(userElement);
+        user.appendChild(logoutButton);
+        user.appendChild(deleteButton);
+
+        localStorage.setItem('userName', name);
+    }
+
+    function logout() {
+        fetch('http://localhost:3000/logout?name=' + localStorage.getItem('userName'))
+        localStorage.removeItem('userName');
+        location.reload();
+    }
+
+    function deleteFunc() {
+        fetch('http://localhost:3000/delete?name=' + localStorage.getItem('userName'),
+            {
+                method: 'DELETE'
+            })
+        localStorage.removeItem('userName');
+        location.reload();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const storedName = localStorage.getItem('userName');
+        if (storedName) {
+            Show(storedName)
+        }
+    });
+</script>
