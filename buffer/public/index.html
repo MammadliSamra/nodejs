@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="text" name='input1'>
+    <input type="text" name='input2'>
+    <input type="text" name='input3'>
+    <input type="text" name='input4'>
+    <input type="text" name='input5'>
+    <button type="submit" onclick="Send()">Submit</button>
+
+    <div id="input-value"></div>
+</body>
+
+</html>
+
+<script>
+    function Send() {
+        var input1 = document.getElementsByTagName('input')[0].value
+        var input2 = document.getElementsByTagName('input')[1].value
+        var input3 = document.getElementsByTagName('input')[2].value
+        var input4 = document.getElementsByTagName('input')[3].value
+        var input5 = document.getElementsByTagName('input')[4].value;
+
+        fetch(`/getbuffer?input1=${input1}&input2=${input2}&input3=${input3}&input4=${input4}&input5=${input5}`)
+            .then(response => response.json())
+            .then(data => {
+                var inputs = document.getElementById('input-value');
+                inputs.innerHTML = '';
+                inputs.innerHTML = `
+                        <p> ${String.fromCharCode(...data)}</p>
+                    `;
+            });
+    }
+
+
+</script>
